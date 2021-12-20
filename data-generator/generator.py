@@ -45,7 +45,7 @@ class AssetDB():
                 token = symbols[random.randint(1, len(symbols) - 1)]
                 balance = round(random.uniform(1.0, 100.0), 8)
                 args.append((user_id, token, balance))
-                logging.info(f"({user_id}, {token}, {balance})")
+                # logging.info(f"({user_id}, {token}, {balance})")
             
             self.executemany(sql, args)
             logging.info(f"{batch_size} records upserted.")
@@ -59,7 +59,7 @@ class AssetDB():
                 for token in tokens:
                     balance = round(random.uniform(1.0, 100.0), 8)
                     args.append((user_id, token, balance))
-                    logging.info(f"({user_id}, {token}, {balance})")
+                    # logging.info(f"({user_id}, {token}, {balance})")
 
             self.executemany(sql, args)
             logging.info(f"{len(user_ids) * len(tokens)} records upserted.")
@@ -92,7 +92,7 @@ if __name__ == "__main__":
     parser.add_argument('--min_user_id', type=int, help='minimum user id')
     parser.add_argument('--max_user_id', type=int, help='maximum user id')
     parser.add_argument('--batch_size', type=int, help='batch size of each upsert sql')
-    parser.add_argument('--interval', type=int, help='how many seconds to sleep between each batch')
+    parser.add_argument('--interval', type=float, help='how many seconds to sleep between each batch')
 
     args = parser.parse_args()
     project_id = args.project
