@@ -38,6 +38,7 @@ class AssetDB():
             
     def upsert(self, symbols, batch_size, max_user_id):
         sql = "insert into user_asset (user_id, token, balance) values (%s, %s, %s) on duplicate key update balance=values(balance)"
+        n = 0
         while True:
             args = []
             for i in range(batch_size):
@@ -45,27 +46,28 @@ class AssetDB():
                 token = symbols[random.randint(1, len(symbols) - 1)]
                 balance = round(random.uniform(1.0, 100.0), 8)
                 args.append((user_id, token, balance))
-                # logging.info(f"({user_id}, {token}, {balance})")
             
             self.executemany(sql, args)
-            logging.info(f"{batch_size} records upserted.")
+            n = n + 1
+            if n % 100 == 0:
+                logging.info(f"{batch_size * n} records upserted.")
             time.sleep(interval)
             
     def upsertfew(self, user_ids, tokens):
         sql = "insert into user_asset (user_id, token, balance) values (%s, %s, %s) on duplicate key update balance=values(balance)"
+        n = 0
         while True:
             args = []
             for user_id in user_ids:
                 for token in tokens:
                     balance = round(random.uniform(1.0, 100.0), 8)
                     args.append((user_id, token, balance))
-                    # logging.info(f"({user_id}, {token}, {balance})")
 
             self.executemany(sql, args)
-            logging.info(f"{len(user_ids) * len(tokens)} records upserted.")
-            time.sleep(interval)
-                
-        
+            n = n + 1
+            if n % 10 == 0:
+                logging.info(f"{len(user_ids) * len(tokens) * n} records upserted.")
+            time.sleep(interval)        
 
 def get_password(project_id, secret_id):
     client = secretmanager.SecretManagerServiceClient()
