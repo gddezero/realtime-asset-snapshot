@@ -9,11 +9,6 @@ logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO)
 
 class AssetDB():
     def __init__(self, host, user, password, db):
-        # self.host = host
-        # self.user = user
-        # self.password = password
-        # self.db = db
-        print(db_password)
         self.connection = pymysql.connect(host=host, user=user, password=password, database=db)
 
     def execute(self, sql, args=None):
@@ -63,7 +58,10 @@ class AssetDB():
                     balance = round(random.uniform(1.0, 100.0), 8)
                     args.append((user_id, token, balance))
 
-            self.executemany(sql, args)
+            try:
+                self.executemany(sql, args)
+            except Exception as e:
+                logging.error(e)
             n = n + 1
             if n % 10 == 0:
                 logging.info(f"{len(user_ids) * len(tokens) * n} records upserted.")
